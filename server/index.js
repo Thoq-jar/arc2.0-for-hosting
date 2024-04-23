@@ -18,6 +18,7 @@ const server = createServer();
 
 app.use(bodyParser.json());
 let messages = [];
+
 function filterWords(message, wordList) {
   const words = message.split(/\s+/);
   function containsBadWord(word) {
@@ -29,6 +30,7 @@ function filterWords(message, wordList) {
   }
   return true;
 }
+
 function filterMessage(message) {
   const filteredWords = [
     "nigga",
@@ -52,7 +54,7 @@ function filterMessage(message) {
     "wh0re",
     "digger",
   ];
- 
+
   for (const word of filteredWords) {
     if (message.toLowerCase().includes(word)) {
       return null;
@@ -60,13 +62,14 @@ function filterMessage(message) {
   }
   return message;
 }
+
 app.post("/sendmessage", (req, res) => {
   const { username, message } = req.body;
   const filteredMessage = filterMessage(message);
   if (!filteredMessage) {
     return res.status(400).send("Message contains prohibited words");
   }
-  
+
   const newMessage = { username, message: filteredMessage };
   messages.push(newMessage);
   res.status(201).send(newMessage);
@@ -75,6 +78,7 @@ app.post("/sendmessage", (req, res) => {
 app.get("/messages", (req, res) => {
   res.send(messages);
 });
+
 app.use(express.static(publicPath));
 app.use("/uv/", express.static(uvPath));
 app.use("/epoxy/", express.static(epoxyPath));
@@ -109,8 +113,6 @@ if (isNaN(port)) port = 8080;
 server.listen(port, () => {
   console.log("Server is listening on port", port);
 });
-
-
 
 process.on("SIGINT", shutdown);
 process.on("SIGTERM", shutdown);
